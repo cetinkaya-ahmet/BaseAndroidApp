@@ -60,51 +60,23 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(10.dp))
             VentilationButton()
             Spacer(modifier = Modifier.height(40.dp))
+            Column(verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
 
-            val padding = 20.dp
-            val density = LocalDensity.current
-            Surface(
-                shape = RectangleShape,
-                color = Color.White,
-                elevation = 12.dp,
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .drawWithContent {
-                        val paddingPx = with(density) { padding.toPx() }
-                        clipRect(
-                            left = -paddingPx,
-                            top = 0f,
-                            right = size.width + paddingPx,
-                            bottom = size.height + paddingPx
-                        ) {
-                            this@drawWithContent.drawContent()
-                        }
-                    }
             ) {
-                Column(verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-
-                ) {
-                    Text(text = "Hikayeler", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Blue)
-                    Spacer(modifier = Modifier.height(20.dp))
-                    StoryItem(navController = navController)
-                    Spacer(modifier = Modifier.height(10.dp))
-                    StoryItem(navController = navController)
-                    Spacer(modifier = Modifier.height(10.dp))
-                    StoryItem(navController = navController)
-                }
+                Text(text = "Hikayeler", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Blue)
+                Spacer(modifier = Modifier.height(20.dp))
+                StoryItem(navController = navController, storyName = "Tamek")
+                StoryItem(navController = navController, storyName = "Sagra")
+                StoryItem(navController = navController, storyName = "Gold Harvest")
             }
-
-
-
         }
 
     }
 }
 
 @Composable
-fun EmergencyButton(
+private fun EmergencyButton(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     Button(onClick = {
@@ -124,7 +96,7 @@ fun EmergencyButton(
 }
 
 @Composable
-fun IntroButton(
+private fun IntroButton(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val mCheckedState = remember{ mutableStateOf(false)}
@@ -163,13 +135,13 @@ fun IntroButton(
         }
         Spacer(modifier = Modifier
             .height(1.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(0.95f)
             .background(color = Color.Black))
     }
 }
 
 @Composable
-fun LightButton(
+private fun LightButton(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val mCheckedState = remember{ mutableStateOf(false)}
@@ -185,7 +157,7 @@ fun LightButton(
                 modifier = Modifier.size(34.dp),
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_lightbulb_24),
                 contentDescription = "Some icon",
-                tint = if(mCheckedState.value) Color.Yellow else Color.LightGray
+                tint = if(mCheckedState.value) Color.Yellow else Color.DarkGray
             )
 
 
@@ -204,7 +176,7 @@ fun LightButton(
         }
         Spacer(modifier = Modifier
             .height(1.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(0.95f)
             .background(color = Color.Black))
     }
 
@@ -212,7 +184,7 @@ fun LightButton(
 }
 
 @Composable
-fun DoorButton(
+private fun DoorButton(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val mCheckedState = remember{ mutableStateOf(false)}
@@ -246,12 +218,13 @@ fun DoorButton(
         }
         Spacer(modifier = Modifier
             .height(1.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(0.95f)
             .background(color = Color.Black))
     }
 }
+
 @Composable
-fun VentilationButton(
+private fun VentilationButton(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val mCheckedState = remember{ mutableStateOf(false)}
@@ -285,7 +258,7 @@ fun VentilationButton(
         }
         Spacer(modifier = Modifier
             .height(1.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(0.95f)
             .background(color = Color.Black))
     }
 
@@ -293,50 +266,73 @@ fun VentilationButton(
 
 
 @Composable
-fun StoryItem(
+private fun StoryItem(
     viewModel: HomeViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    storyName : String
 ) {
     var mCheckedState by remember{ mutableStateOf(false)}
-    Row(modifier = Modifier
-        .background(color = PinkishGrey, shape = RoundedCornerShape(10.dp))
-        .fillMaxWidth(0.95f)
-        .padding(8.dp)
-    , horizontalArrangement = Arrangement.SpaceBetween
-    , verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painterResource(R.drawable.ic_baseline_settings_24),
-            contentDescription = "",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(25.dp)
-                .clickable {
-                    navController.navigate(
-                        "story_detail_screen/${12}"
-                    )
+    val padding = 8.dp
+    val density = LocalDensity.current
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = Color.White,
+        elevation = 12.dp,
+        modifier = Modifier
+            .padding(padding)
+            .drawWithContent {
+                val paddingPx = with(density) { padding.toPx() }
+                clipRect(
+                    left = 0f,
+                    top = 0f,
+                    right = size.width + paddingPx,
+                    bottom = size.height + paddingPx
+                ) {
+                    this@drawWithContent.drawContent()
                 }
-        )
-
-        Text(text = "Tamek", color = White, style = MaterialTheme.typography.h5,
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .padding(4.dp)
-        )
-
-        Button(onClick = {
-            viewModel.emergencyStart()
-            mCheckedState = !mCheckedState
-        }, shape = RoundedCornerShape(10.dp)
-            ,  colors = if(mCheckedState) ButtonDefaults.buttonColors(backgroundColor = Color.Green) else ButtonDefaults.buttonColors(backgroundColor = Color.Red) ) {
-            Text(text = if(mCheckedState) "Durdur" else "Başlat", color = White)
-            Icon(
-                modifier = Modifier.size(34.dp),
-                imageVector = if(mCheckedState) ImageVector.vectorResource(id = R.drawable.ic_baseline_pause_circle_24) else ImageVector.vectorResource(id = R.drawable.ic_baseline_play_arrow_24),
-                contentDescription = "Some icon",
-                tint = Color.White
+            }
+    ) {
+        Row(modifier = Modifier
+            .background(color = PinkishGrey, shape = RoundedCornerShape(10.dp))
+            .fillMaxWidth(0.95f)
+            .padding(8.dp)
+            , horizontalArrangement = Arrangement.SpaceBetween
+            , verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painterResource(R.drawable.ic_baseline_settings_24),
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(25.dp)
+                    .clickable {
+                        navController.navigate(
+                            "story_detail_screen/${storyName}"
+                        )
+                    }
             )
+
+            Text(text = storyName, color = White, style = MaterialTheme.typography.h6, maxLines = 1,
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .padding(4.dp)
+            )
+
+            Button(onClick = {
+                viewModel.emergencyStart()
+                mCheckedState = !mCheckedState
+            }, shape = RoundedCornerShape(10.dp)
+                ,  colors = if(mCheckedState) ButtonDefaults.buttonColors(backgroundColor = Color.Green) else ButtonDefaults.buttonColors(backgroundColor = Color.Red) ) {
+                Text(text = if(mCheckedState) "Durdur" else "Başlat", color = White)
+                Icon(
+                    modifier = Modifier.size(34.dp),
+                    imageVector = if(mCheckedState) ImageVector.vectorResource(id = R.drawable.ic_baseline_pause_circle_24) else ImageVector.vectorResource(id = R.drawable.ic_baseline_play_arrow_24),
+                    contentDescription = "Some icon",
+                    tint = Color.White
+                )
+            }
         }
     }
+
 
 }
