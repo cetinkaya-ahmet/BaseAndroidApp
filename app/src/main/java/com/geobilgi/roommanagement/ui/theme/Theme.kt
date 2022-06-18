@@ -33,7 +33,7 @@ fun RoomManagementTheme(
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
-        DarkColorPalette
+        LightColorPalette//DarkColorPalette
     } else {
         LightColorPalette
     }
