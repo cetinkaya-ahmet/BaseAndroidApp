@@ -66,4 +66,45 @@ class RoomManagementRepository @Inject constructor(
         }
         return Resource.Success(response)
     }
+
+    suspend fun startNewSession(gameId: String): Resource<CommonResponse> {
+        val response = try {
+            val body = StartNewSessionRequest()
+            body.add(
+                StartNewSessionRequestItem(
+                    Status = "1",
+                    GameGroup = gameId,
+                    CreatedBy = UUID.fromString("00000000-0000-0000-0000-000000000000").toString())
+            )
+            api.startNewSession(body = body)
+        } catch(e: Exception) {
+            return Resource.Error(e.message.toString())
+        }
+        return Resource.Success(response)
+    }
+
+    suspend fun getActiveSession(): Resource<GetActiveSessionResponse> {
+        val response = try {
+            api.getActiveSession()
+        } catch(e: Exception) {
+            return Resource.Error(e.message.toString())
+        }
+        return Resource.Success(response)
+    }
+
+    suspend fun createNewCart(sessionUID: String): Resource<CommonResponse> {
+        val response = try {
+            val body = CreateNewCartRequest()
+            body.add(
+                CreateNewCartRequestItem(
+                    Status = "1",
+                    GameSessionUID = sessionUID,
+                    CreatedBy = UUID.fromString("00000000-0000-0000-0000-000000000000").toString())
+            )
+            api.createNewCartBySession(body = body)
+        } catch(e: Exception) {
+            return Resource.Error(e.message.toString())
+        }
+        return Resource.Success(response)
+    }
 }

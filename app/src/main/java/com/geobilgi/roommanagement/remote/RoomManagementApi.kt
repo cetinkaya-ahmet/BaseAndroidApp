@@ -1,8 +1,6 @@
 package com.geobilgi.roommanagement.remote
 
-import com.geobilgi.roommanagement.model.CommonResponse
-import com.geobilgi.roommanagement.model.SettingsResponse
-import com.geobilgi.roommanagement.model.UpdateSettingsRequest
+import com.geobilgi.roommanagement.model.*
 import retrofit2.http.*
 
 interface RoomManagementApi {
@@ -20,4 +18,16 @@ interface RoomManagementApi {
             @Body() body : UpdateSettingsRequest
     ): CommonResponse
 
+    @POST("InsertTable/4D1C28A3-7CFA-44F0-B92F-3EAEFE4D71CC")
+    suspend fun startNewSession(
+        @Body() body : StartNewSessionRequest
+    ): CommonResponse
+
+    @GET("GetTable/vw_ActiveSession")
+    suspend fun getActiveSession(): GetActiveSessionResponse
+
+    @POST("InsertTable/41840ECE-C7E9-439D-91BE-7A61EA398C06")
+    suspend fun createNewCartBySession(
+        @Body() body : CreateNewCartRequest
+    ): CommonResponse
 }

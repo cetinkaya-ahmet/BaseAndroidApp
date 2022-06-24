@@ -60,16 +60,75 @@ class HomeViewModel @Inject constructor(
                     infoMessage.value = result.data?.infoMessage ?: "İşlem Başarılı"
                     errorMessage.value = ""
                     isLoading.value = false
+                    if(settingsItem.Key == "ActiveGame" && settingsItem.Value != "0"){
+                        startSession(settingsItem.Value)
+                    }
                 }
                 is Resource.Error -> {
                     errorMessage.value = result.message!!
                     isLoading.value = false
                 }
             }
-            //getRoomSettings()
+        }
+    }
+
+    private fun startSession(gameId: String){
+        isLoading.value = true
+        viewModelScope.launch {
+            val result = repository.startNewSession(gameId)
+            when(result) {
+                is Resource.Success -> {
+                    getActiveSession()
+
+                }
+                is Resource.Error -> {
+                    errorMessage.value = result.message!!
+                    isLoading.value = false
+                }
+            }
+        }
+    }
+
+    private fun getActiveSession(){
+        isLoading.value = true
+        viewModelScope.launch {
+            val result = repository.getActiveSession()
+            when(result) {
+                is Resource.Success -> {
+                    val items =  result.data!!.mapIndexed { index, item -> item }
+                    if(items.isNotEmpty()){
+                        createNewCart(items[0].UID)
+                    }else{
+                        errorMessage.value = "Yeni oturum oluşturulamadı"
+                        isLoading.value = false
+                    }
+                }
+                is Resource.Error -> {
+                    errorMessage.value = result.message!!
+                    isLoading.value = false
+                }
+            }
 
         }
     }
+
+    private fun createNewCart(sessionUID: String){
+        isLoading.value = true
+        viewModelScope.launch {
+            val result = repository.createNewCart(sessionUID)
+            when(result) {
+                is Resource.Success -> {
+                    errorMessage.value = ""
+                    isLoading.value = false
+                }
+                is Resource.Error -> {
+                    errorMessage.value = result.message!!
+                    isLoading.value = false
+                }
+            }
+        }
+    }
+
 
     fun emergencyStart(){
         viewModelScope.launch {
